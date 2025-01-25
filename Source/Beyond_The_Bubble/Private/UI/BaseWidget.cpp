@@ -2,4 +2,12 @@
 
 
 #include "UI/BaseWidget.h"
+#include "Components/NamedSlot.h"
 
+UUserWidget* UBaseWidget::DisplayDialogue(TSubclassOf<UUserWidget> NewWidgetClass)
+{
+    UUserWidget* NewWidget = CreateWidget<UUserWidget>(this, NewWidgetClass);
+    DialogueBox->SetContent(NewWidget);
+
+    return NewWidget;
+}
