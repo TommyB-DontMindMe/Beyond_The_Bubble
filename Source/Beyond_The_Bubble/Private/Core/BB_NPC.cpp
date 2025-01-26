@@ -52,7 +52,10 @@ void ABB_NPC::Tick(float DeltaTime)
 			LastIndex = TargetIndex;
 			TargetIndex = NavigationTarget.IsValidIndex(TargetIndex + 1) ? TargetIndex + 1 : 0;
 
+			FRotator NewRotation = FRotationMatrix::MakeFromX(NavigationTarget[TargetIndex] - NavigationTarget[LastIndex]).Rotator();
+			SetActorRotation(NewRotation);
 			TravelDistance = FVector::Distance(NavigationTarget[LastIndex], NavigationTarget[TargetIndex]);
+			
 		}
 
 	}
