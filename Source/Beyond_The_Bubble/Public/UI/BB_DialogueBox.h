@@ -4,25 +4,32 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BaseWidget.generated.h"
+#include "BB_DialogueBox.generated.h"
 
-class UCanvasPanel;
+class UButton;
+class UTextBlock;
+
 /**
  * 
  */
 UCLASS()
-class BEYOND_THE_BUBBLE_API UBaseWidget : public UUserWidget
+class BEYOND_THE_BUBBLE_API UBB_DialogueBox : public UUserWidget
 {
 	GENERATED_BODY()
+
 protected:
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* ScreenDisplay;
-
+	UTextBlock* DisplayedText;
+	
 	UPROPERTY(meta = (BindWidget))
-	UNamedSlot* DialogueBox;
+	UButton* CloseButton;
 
 public:
+	virtual void NativeConstruct() override;
+
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	UUserWidget* DisplayDialogue(TSubclassOf<UUserWidget> NewWidgetClass);
-	
+	void SetText(FText NewText);
+
+	UFUNCTION()
+	void CloseWidget();
 };

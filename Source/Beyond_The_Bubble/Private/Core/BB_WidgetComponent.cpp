@@ -44,3 +44,11 @@ void UBB_WidgetComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
+UUserWidget* UBB_WidgetComponent::AddDialogueWidget(TSubclassOf<UUserWidget> NewWidget)
+{
+	if (BaseWidgetInstance)
+		return BaseWidgetInstance->DisplayDialogue(NewWidget);
+
+	return nullptr;
+}
+
