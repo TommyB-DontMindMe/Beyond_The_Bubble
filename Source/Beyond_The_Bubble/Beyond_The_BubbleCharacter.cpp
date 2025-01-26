@@ -1,8 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Beyond_The_BubbleCharacter.h"
-#include "Beyond_The_BubbleProjectile.h"
-#include "Destructable_object.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
