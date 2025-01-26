@@ -2,6 +2,7 @@
 
 #include "Beyond_The_BubbleCharacter.h"
 #include "Beyond_The_BubbleProjectile.h"
+#include "Destructable_object.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -9,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "kismet/GameplayStatics.h"
+
 #include "Engine/LocalPlayer.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -67,10 +70,43 @@ void ABeyond_The_BubbleCharacter::SetupPlayerInputComponent(UInputComponent* Pla
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABeyond_The_BubbleCharacter::Look);
+
+		// Interact
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &ABeyond_The_BubbleCharacter::Interact);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void ABeyond_The_BubbleCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+	if (OtherActor->ActorHasTag(FName(TEXT("Destructable"))))
+	{
+		if (!bAtBreakableObject && !isBroken)
+		{
+
+			UE_LOG(LogTemp, Warning, TEXT("Overlapping"));
+			bAtBreakableObject = true;
+			DestructructableObject = Cast<AActor>(OtherActor);
+			
+		}
+
+	}
+}
+
+//For removing text if its showned
+void ABeyond_The_BubbleCharacter::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+
+	if (OtherActor->ActorHasTag(FName(TEXT("Destructable"))))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Overlapping"));
+		bAtBreakableObject = false;
+		DestructructableObject = nullptr;
 	}
 }
 
@@ -98,5 +134,16 @@ void ABeyond_The_BubbleCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ABeyond_The_BubbleCharacter::Interact(const FInputActionValue& Value)
+{
+	if (bAtBreakableObject && !isBroken)
+	{
+		UGameplayStatics::ApplyDamage(DestructructableObject, 1, Controller, this, DamageType);
+		isBroken = true;
+		return;
+
 	}
 }
